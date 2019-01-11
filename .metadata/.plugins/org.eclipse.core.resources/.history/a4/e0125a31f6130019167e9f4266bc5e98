@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="ec85206b-ee56-45b8-add0-ce0f75bc8644" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="subflowprojectFlow" doc:id="bed9e2c4-8417-41bf-9aa4-167de6fa532b" >
+		<http:listener doc:name="Listener" doc:id="88b6b095-fe7e-468f-870b-821659f1bc64" config-ref="HTTP_Listener_config" path="/maths"/>
+		<set-variable value="#[message.payload.A]" doc:name="Set Variable" doc:id="787372ee-6d27-414a-a93f-b39e0796d974" variableName="A"/>
+		<set-variable value="#[message.payload.B]" doc:name="Set Variable" doc:id="9f9b3561-fc64-4adf-9768-bfe70106173a" variableName="B"/>
+		<choice doc:name="Choice" doc:id="90624ed2-63f4-493d-823a-3ee6602b41f8" >
+			<when >
+				<flow-ref doc:name="Flow Reference" doc:id="b7cd1a29-ade4-4be2-a0b9-57a71a6091c4" name="Addition"/>
+			</when>
+			<when >
+				<flow-ref doc:name="Flow Reference" doc:id="76246070-8b46-4de3-b59f-62aa4282f81f" name="Subtraction"/>
+			</when>
+			<when >
+				<flow-ref doc:name="Flow Reference" doc:id="ae6893d0-90ee-40a9-928f-30db05b81891" name="Multiplication"/>
+			</when>
+			<when >
+				<flow-ref doc:name="Flow Reference" doc:id="8e3cdbaf-99e1-4ab7-8128-fa0ee423c3fe" name="Division"/>
+			</when>
+			<otherwise >
+				<set-payload value="#[payload]" doc:name="Set Payload" doc:id="e001dc29-8f76-4aa5-ba71-adadbaca7430" />
+			</otherwise>
+		</choice>
+	</flow>
+	<sub-flow name="Addition" doc:id="8e64ee33-f64c-4957-ba34-c9f4b9affe88" >
+		<set-variable value="#[vars.A + vars.B]" doc:name="Set Variable" doc:id="09d64669-d169-4ff7-9ee9-3a4191a72887" variableName="C"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="f018f1aa-9e95-4c3e-a997-487c9aeafe9c" />
+	</sub-flow>
+	<sub-flow name="Subtraction" doc:id="173c8684-1e5b-4c09-a3ca-329f32d8f48e" >
+		<set-variable value="" doc:name="Set Variable" doc:id="fab0ef70-fe4a-4d32-bf86-3f3890f0282a" variableName="C"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="d06fce19-7b6d-4447-927f-ff7e5cfe3f8c" />
+	</sub-flow>
+	<sub-flow name="Multiplication" doc:id="8b3cfd99-0c15-42a1-b28d-af1c8ef04874" >
+		<set-variable value="" doc:name="Set Variable" doc:id="4dcc75da-a61e-4d3c-8a73-5b927ee80e61" />
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="ec604153-d074-4f46-92b4-53e935007b48" />
+	</sub-flow>
+	<sub-flow name="Division" doc:id="f40fbc3a-7175-4892-aff7-da6b7eab2aa3" >
+		<set-variable value="" doc:name="Set Variable" doc:id="f6bf4c45-731e-4da4-bf6c-20815830236b" />
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="d1ca418d-1719-4e2b-8615-ceb6f457807c" />
+	</sub-flow>
+</mule>

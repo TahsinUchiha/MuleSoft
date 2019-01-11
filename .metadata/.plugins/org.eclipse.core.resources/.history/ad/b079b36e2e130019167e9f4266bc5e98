@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="00cb61a5-4214-4f05-bbf2-78a559ae945a" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="GetAPI" doc:id="8a2e1d56-87ab-4003-ae4a-e75ef2da000e" >
+		<http:listener doc:name="Listener" doc:id="340f2c65-6d84-4bbe-8e40-058c7d3ee1c7" path="API" allowedMethods="GET" config-ref="HTTP_Listener_config"/>
+		<set-payload value='#[message.attributes.method ++ "                       Welcome my Friend!" ++ message.attributes.queryParams.name as String ++ " are you currently living in " ++ message.attributes.queryParams.city as String ++ " ? "]' doc:name="Set Payload" doc:id="e42755c8-741d-4d3e-a5ca-3107980cefb4" mimeType="text/html"/>
+	</flow>
+	<flow name="PostAPI" doc:id="ed246164-0c9f-40e0-95fb-8aef9fedac45" >
+		<http:listener doc:name="Listener" doc:id="f931f33e-8456-4d3e-8178-53f12fe1d234" config-ref="HTTP_Listener_config" path="API" allowedMethods="POST"/>
+		<set-payload value='#[message.attributes.method ++ message.payload.name ++ " I am from " ++ message.payload.city]' doc:name="Set Payload" doc:id="798145f1-b1e4-4f32-89b4-d2dadafacb10" mimeType="text/html"/>
+	</flow>
+	<flow name="GetMathAPI" doc:id="46aeac16-ed45-4013-870d-b3d971fd3412" >
+		<http:listener doc:name="Listener" doc:id="05ad6d56-a50b-432b-a944-933f494030be" config-ref="HTTP_Listener_config" path="/Maths" allowedMethods="GET"/>
+		<set-payload value='#["Result is = " ++ (message.attributes.queryParams.No1 as Number + message.attributes.queryParams.No2 as Number) as String]' doc:name="Set Payload" doc:id="38f21851-fdf8-4fbf-a487-315aa0e2249d" mimeType="text/html"/>
+	</flow>
+	<flow name="PostMathAPI" doc:id="f91478c4-40d4-4a63-8b3e-7a1e1a5ef429" >
+		<http:listener doc:name="Listener" doc:id="561284c2-ec2c-4c83-b707-65091240ee5c" config-ref="HTTP_Listener_config" path="/Maths" allowedMethods="POST"/>
+		<set-payload value='#["Result is = " ++ (message.payload.No1 as Number + message.payload.No2 as Number) as String]' doc:name="Set Payload" doc:id="2213ef90-4b97-41be-bd60-1f329e7c7e87" mimeType="text/html"/>
+	</flow>
+	<flow name="VariablesPOST" doc:id="4056aa48-b85b-43df-920b-d15e6fc82985" >
+		<http:listener doc:name="Listener" doc:id="1f75cc87-1089-4543-8e75-563145ea0772" config-ref="HTTP_Listener_config" path="/Var" allowedMethods="POST"/>
+		<set-variable value="#[message.payload.A]" doc:name="Set Variable" doc:id="dd1d8b86-33f1-4a59-a466-51dad4b3b731" variableName="A"/>
+		<set-variable value="#[message.payload.B]" doc:name="Set Variable" doc:id="8729beec-9a25-4f94-8a6b-6e0c6d72825d" variableName="B"/>
+		<set-variable value="#[vars.A + vars.B]" doc:name="Set Variable" doc:id="27fb455d-aae4-4e16-bcef-6e0c11575269" variableName="C"/>
+		<set-payload value='#["Result = " ++ vars.C]' doc:name="Set Payload" doc:id="fd34ca5e-9fa7-4164-9d54-3fcd168214f1" mimeType="text/html"/>
+	</flow>
+	<flow name="VariableGET" doc:id="91765b55-8f64-4437-89f9-82f023acbfb0" >
+		<http:listener doc:name="Listener" doc:id="8aa37ad6-8371-445e-ad72-f28fd7ae5d13" config-ref="HTTP_Listener_config" path="/Var" allowedMethods="GET"/>
+		<set-variable value="#[message.attributes.queryParams.A as Number]" doc:name="Set Variable" doc:id="6d724bf1-d0f7-4cfd-abaf-ae5e841471b1" variableName="A"/>
+		<set-variable value="#[message.attributes.queryParams.B as Number]" doc:name="Set Variable" doc:id="578a167b-c4a1-49cb-af50-d59723d0e172" variableName="B"/>
+		<set-variable value="#[vars.A + vars.B]" doc:name="Set Variable" doc:id="740431fb-155d-4ede-816d-27c016c0b976" variableName="F"/>
+		<set-payload value='#["Result is " ++ vars.C]' doc:name="Set Payload" doc:id="388859d8-5e0f-4665-aa7f-4406cb372f24" />
+	</flow>
+</mule>

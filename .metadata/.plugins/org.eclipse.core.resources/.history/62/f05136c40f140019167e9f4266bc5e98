@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4d710338-7e5d-4f01-8dcd-e84bcf323552" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="d90ddb31-475c-4fdf-8642-693cfc89f3cc" >
+		<http:request-connection host="localhost" port="8082" />
+	</http:request-config>
+	<flow name="requestflowFlow" doc:id="a4b39406-72cc-4780-a74b-3542b7774a58" >
+		<http:listener doc:name="Listener" doc:id="b7bed90f-96dd-4d10-b40e-70241e5aec61" config-ref="HTTP_Listener_config" path="/listening"/>
+		<http:request method="GET" doc:name="Request" doc:id="e2d278dd-ac00-481b-b32f-7485cee97452" config-ref="HTTP_Request_configuration" path="/request"/>
+		<set-payload value='#[s"Hi"]' doc:name="Set Payload" doc:id="bd01e309-2a0a-4913-b207-643433b7e859" />
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="d234a191-9259-4b8a-90b7-813e46c90ec3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message": payload
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="requestflowFlow1" doc:id="291f729d-0a15-48c6-8fed-d97e5fcf8de5" >
+		<http:listener doc:name="Listener" doc:id="3de02ddd-6d45-42d9-a383-74545a5f381f" config-ref="HTTP_Listener_config" path="/request"/>
+		<set-payload doc:name="Set Payload" doc:id="aed05a4b-7127-44b6-b647-f7cc98f1a08b" mimeType="text/html" value='#["This is a message!"]'/>
+	</flow>
+</mule>

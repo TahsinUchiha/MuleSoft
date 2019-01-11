@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="cedd9e54-4d4e-413a-a324-6fc0e4d7585c" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<flow name="Manchester" doc:id="ff98d8cc-ab0c-40b8-88d5-dc4cc273ed8b" >
+		<http:listener doc:name="Listener" doc:id="a1f804cd-f8c2-4f8a-90fd-eac86cbf8c2d" config-ref="HTTP_Listener_config" path="manchester"/>
+		<set-payload value='This is Manchester!' doc:name="Set Payload" doc:id="e5f4c8e1-ed54-49b0-9fca-18a37a5b42aa" mimeType="text/html"/>
+	</flow>
+	<flow name="QA" doc:id="bf926c02-0a99-41b0-8d11-48e55371347a" >
+		<http:listener doc:name="Listener" doc:id="64e832de-f480-42c4-93b4-5ed85461712e" config-ref="HTTP_Listener_config" path="qa"/>
+		<set-payload value="You called QA!" doc:name="Set Payload" doc:id="7f8226c9-7e17-468f-b61a-4922433f193a" />
+	</flow>
+	<flow name="GetMethod" doc:id="fd973268-9634-4833-ad74-2999b054b8a0" >
+		<http:listener doc:name="Listener" doc:id="7a27d69e-0879-4c27-9d09-d0a7c70c9c34" config-ref="HTTP_Listener_config" path="/get"/>
+		<set-payload value='#[message.attributes.queryParams.name as String ++ " lives in " ++ attributes.queryParams.city as String]' doc:name="Set Payload" doc:id="6eb81d3c-4f12-4137-9c0d-d484aeee88d8" mimeType="text/html"/>
+	</flow>
+	<flow doc:id="edab3e1d-b45b-478c-8f6d-2451c25141bb" name="PostMethod">
+		<http:listener doc:name="Listener" doc:id="48885a73-a3cc-4128-baaf-d01ea20b7c80" config-ref="HTTP_Listener_config" path="/post"/>
+		<set-payload value='#[message.payload.name ++ " lives in " ++ message.payload.city]' doc:name="Set Payload" doc:id="b3d90b70-7151-4469-8478-fc73c4f7bd2d" mimeType="text/html"/>
+	</flow>
+	<flow name="AdvancedAllowed[Get]" doc:id="6f1df714-3fe2-48c6-bddd-969f4ad896cd" >
+		<http:listener doc:name="Listener" doc:id="e56e03f6-0743-4094-9b08-abd1c6044591" config-ref="HTTP_Listener_config" path="/adGet"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="aa39ab0d-7d8e-4811-88ba-974580d2cf42" />
+	</flow>
+	<flow name="myinfoFlow1" doc:id="3e778f97-f1ff-42e9-9328-bece6a020567" >
+		<http:listener doc:name="Listener" doc:id="ecba7e07-6608-48a9-9654-e7e8ce96dd43" />
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="ed03ba81-0417-40e1-ae40-d4e743923123" />
+	</flow>
+</mule>

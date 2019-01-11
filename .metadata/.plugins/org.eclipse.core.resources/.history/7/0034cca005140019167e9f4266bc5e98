@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4d710338-7e5d-4f01-8dcd-e84bcf323552" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<http:request-config doc:name="HTTP Request configuration" doc:id="f8b76e1f-83b5-4b73-ab5f-46bb7f7bbe6a">
+		<http:request-connection protocol="HTTPS" host="localhost" port="8082"/>
+	</http:request-config>
+	<flow name="requestflowFlow" doc:id="a4b39406-72cc-4780-a74b-3542b7774a58" >
+		<http:listener doc:name="Listener" doc:id="b7bed90f-96dd-4d10-b40e-70241e5aec61" config-ref="HTTP_Listener_config" path="/listening"/>
+		<http:request method="GET" doc:name="Request" doc:id="e2d278dd-ac00-481b-b32f-7485cee97452" url="HTTP://localhost:8082/request"/>
+	</flow>
+	<flow name="requestflowFlow1" doc:id="291f729d-0a15-48c6-8fed-d97e5fcf8de5" >
+		<http:listener doc:name="Listener" doc:id="3de02ddd-6d45-42d9-a383-74545a5f381f" config-ref="HTTP_Listener_config" path="/request"/>
+		<set-payload doc:name="Set Payload" doc:id="aed05a4b-7127-44b6-b647-f7cc98f1a08b" mimeType="text/html" value='#["This is a message!"]'/>
+	</flow>
+</mule>

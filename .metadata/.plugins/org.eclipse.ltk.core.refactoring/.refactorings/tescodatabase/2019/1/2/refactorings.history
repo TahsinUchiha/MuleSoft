@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;tescodatabase/src/main/mule/dataflow.xml&apos; to &apos;tescodb.xml&apos;" description="Rename resource &apos;dataflow.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/mule/dataflow.xml" name="tescodb.xml" stamp="1547205438830" updateReferences="true"/>
+</session>

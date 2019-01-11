@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="208bed81-0d31-4b1f-8f47-69dfa0f8abb5" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<flow name="choiceGET" doc:id="d72897c3-646e-4948-9b59-fd59c2d57f57" >
+		<http:listener doc:name="Listener" doc:id="84c1dd4a-4141-4e91-850d-ecd635802d30" path="Maths" allowedMethods="GET" config-ref="HTTP_Listener_config"/>
+		<set-variable value="#[message.attributes.queryParams.A]" doc:name="Set Variable" doc:id="ef1fac4f-3329-48e3-8622-a3f7b06f5b7a" variableName="A"/>
+		<set-variable value="#[message.attributes.queryParams.B]" doc:name="Set Variable" doc:id="85917134-d691-4f9c-90ca-56bc9ae5d643" variableName="B"/>
+		<choice doc:name="Choice" doc:id="7d418a8b-7e62-4255-8cf8-860389ab7855" >
+			<when expression='#[message.attributes.queryParams.C=="Add"]'>
+				<set-variable value='#[(vars.A + vars.B)]' doc:name="Add" doc:id="4ea3d71f-a6d8-4f3f-b8a3-32f239f6f8f5" variableName="C"/>
+			</when>
+			<when expression='#[message.attributes.queryParams.C=="Subtraction"]'>
+				<set-variable value='#["Subtracting them results " ++ vars.A - vars.B]' doc:name="Subtract" doc:id="336068cf-c500-4f1b-884d-2c47ba5af0da" variableName="C"/>
+			</when>
+			<when expression='#[message.attributes.queryParams.C=="Multiplication"]'>
+				<set-variable value='#[(vars.A * vars.B)]' doc:name="Multiplication" doc:id="acc9de3c-39a2-4e6c-8065-7651e3f4fbc2" variableName="C"/>
+			</when>
+			<when expression='#[message.attributes.queryParams.C=="Division"]'>
+				<set-variable value='#["Dividing them results " ++ vars.A / vars.B]' doc:name="Division" doc:id="797b9aaa-6820-48eb-ac0c-3de4ac2006e0" variableName="C" />
+			</when>
+			<otherwise>
+				<set-payload value='#["Invalid Parameter Passed"]' doc:name="Set Payload" doc:id="dd3f5fbc-5d1d-4a7b-8cc8-49fa61da4577" />
+			</otherwise>
+		</choice>
+		<choice doc:name="Choice" doc:id="b8eb3fb2-9420-40c4-b111-b3ed08089f80" >
+			<when expression="#[vars.C==666]">
+				<set-variable value='YOU ARE The DEVIL!' doc:name="Set Variable" doc:id="6d1adc06-c6e2-4ea9-9388-27da79921f41" variableName="C"/>
+			</when>
+			<when expression="#[vars.C==999]">
+				<set-variable value="Call the POLICE!" doc:name="Set Variable" doc:id="f724cd2f-7877-4e54-86b0-389887f16d67" variableName="C"/>
+			</when>
+		</choice>
+		<set-payload doc:name="Set Payload" doc:id="9b89d5a8-a334-4b55-9912-1fb5adfe9ff4" value='#["The Result is " ++ (vars.C as String) ++ " with italian accent"]' mimeType="text/html"/>
+	</flow>
+	<flow name="ChoicePOST" doc:id="bd6190f3-6197-4bb6-9fc0-94436c1f070b" >
+		<http:listener doc:name="Copy_of_Listener" doc:id="29a54ec3-5123-4acc-9ba6-9db981e62a1c" config-ref="HTTP_Listener_config" path="Maths" allowedMethods="POST" />
+		<set-variable value="#[message.payload.A]" doc:name="Copy_of_Set Variable" doc:id="dceb9fa5-7131-48a2-9478-cb9df6c3a83e" variableName="A" />
+		<set-variable value="#[message.payload.B]" doc:name="Copy_of_Set Variable" doc:id="58861200-e2b8-485d-b6be-43b8bc8c717d" variableName="B" />
+		<choice doc:name="Copy_of_Choice" doc:id="bfef5c85-3187-4faf-9abf-b46a18ba1100" >
+			<when expression='#[message.payload.C=="Add"]' >
+				<set-variable value="#[(vars.A + vars.B)]" doc:name="Copy_of_Add" doc:id="23fdf0f1-1968-4925-839d-c3b510b9ec20" variableName="C" />
+			</when>
+			<when expression='#[message.payload.C=="Subtraction"]' >
+				<set-variable value="#[vars.A - vars.B]" doc:name="Copy_of_Subtract" doc:id="f15c61a2-a3d3-4644-9782-a687e6569929" variableName="C" />
+			</when>
+			<when expression='#[message.payload.C=="Multiplication"]' >
+				<set-variable value="#[vars.A * vars.B]" doc:name="Copy_of_Multiplication" doc:id="92155c27-2d6c-4051-a6b3-dca8eccc88db" variableName="C" />
+			</when>
+			<when expression='#[message.payload.C=="Division"]' >
+				<set-variable value="#[vars.A / vars.B]" doc:name="Copy_of_Division" doc:id="2fe3fdcc-896f-4110-afa2-fb636094f39f" variableName="C" />
+			</when>
+		</choice>
+		<choice doc:name="Copy_of_Choice" doc:id="2b0e7077-0cf0-43d1-94b3-f4608b258fc4">
+			<when expression="#[vars.C==666]">
+				<set-variable value='#["YOU are the DEVIL! :) "]' doc:name="Copy_of_Set Variable" doc:id="df0f13f8-14ce-40cb-9080-ce09acea214b" variableName="C" />
+			</when>
+			<when expression="#[vars.C==999]">
+				<set-variable value="Call the POLICE!" doc:name="Copy_of_Set Variable" doc:id="96a23460-2046-4a91-8d92-f0c9c8a63ef6" variableName="C" />
+			</when>
+		</choice>
+		<set-payload value='#["Result is " ++ vars.C as String]' doc:name="Copy_of_Set Payload" doc:id="8be66321-83af-4920-98cc-d461dbf74706" mimeType="text/html" />
+	</flow>
+	<flow name="TransformGetMethod" doc:id="4ea95912-80f2-4dff-af2c-05448d5dd653" >
+		<http:listener doc:name="Listener" doc:id="ec7460f9-0a4a-413d-a688-f2739d0b9192" config-ref="HTTP_Listener_config" allowedMethods="POST" path="/results"/>
+		<set-variable value="#[message.payload.Physics as Number]" doc:name="Set Variable" doc:id="cf75c2d3-7099-40af-8fec-dc4998a11b2a" variableName="Physics"/>
+		<set-variable value="#[message.payload.Chemistry as Number]" doc:name="Set Variable" doc:id="1d94b7c3-873d-4448-9135-bc7a1b8c1d03" variableName="Chemistry"/>
+		<set-variable value="#[message.payload.Maths as Number]" doc:name="Set Variable" doc:id="ffe1c279-974a-4fc1-ad88-b4442265f06d" variableName="Maths"/>
+		<set-variable value="#[message.payload.TotalMarks as Number]" doc:name="Set Variable" doc:id="625370a9-4022-4c21-a617-66a1e8562c87" variableName="TotalMarks"/>
+		<ee:transform doc:name="Transform Message" doc:id="8d9e5b91-02cf-4bd5-b4c9-b677e0c99f8a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+var totalRecieved = vars.Maths + vars.Chemistry + vars.Physics
+var total = vars.TotalMarks
+var Academy = "QA Consulting"
+fun Percentages() = (totalRecieved / total )*100
+fun Result() =
+if(Percentages() > 80 )
+		"Pass"
+		else
+		"Fail"
+
+---
+{
+	"Physics Mark": vars.Physics,
+	"Chemistry Mark": vars.Chemistry,
+	"Maths Mark": vars.Maths,
+	"Total Marks Obtained": totalRecieved,
+	"Maximum Mark": total,
+	"Percentages": Percentages() ++ "%",
+	"Result": Result()
+		
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="TransformPostMethod" doc:id="40025828-f981-4647-ae0f-abc1613238d5" >
+		<http:listener doc:name="Copy_of_Listener" doc:id="28144888-0b01-4dc6-b300-47429fc6f66a" config-ref="HTTP_Listener_config" path="/results" allowedMethods="GET" />
+		<set-variable value="#[message.attributes.queryParam.Physics as Number]" doc:name="Copy_of_Set Variable" doc:id="cdabde40-4e06-4680-84bc-376848146fbd" variableName="Physics" />
+		<set-variable value="#[message.attributes.queryParam.Chemistry as Number]" doc:name="Copy_of_Set Variable" doc:id="ac9799a6-d9ad-4706-b048-84f60d46d1e2" variableName="Chemistry" />
+		<set-variable value="#[message.attributes.queryParam.Maths as Number]" doc:name="Copy_of_Set Variable" doc:id="3c948f29-4d28-49e0-beaa-08d4c3eb657c" variableName="Maths" />
+		<set-variable value="#[message.attributes.queryParam.TotalMarks]" doc:name="Copy_of_Set Variable" doc:id="fe6fb039-0aae-4559-8018-a28f0c331a6e" variableName="TotalMarks" />
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="91ef7e55-15e1-44c3-8da5-da7c4ea8e9ae" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+var totalRecieved = vars.Maths + vars.Chemistry + vars.Physics
+var total = vars.TotalMarks
+var Academy = "QA Consulting"
+fun Percentages() = (totalRecieved / total )*100
+fun Result() =
+if(Percentages() > 80 )
+		"Pass"
+		else
+		"Fail"
+
+---
+{
+	"Physics Mark": vars.Physics,
+	"Chemistry Mark": vars.Chemistry,
+	"Maths Mark": vars.Maths,
+	"Total Marks Obtained": totalRecieved,
+	"Maximum Mark": total,
+	"Percentages": Percentages() ++ "%",
+	"Result": Result()
+		
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

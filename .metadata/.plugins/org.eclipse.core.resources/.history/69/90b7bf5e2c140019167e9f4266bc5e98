@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1ff6a12f-1478-4a54-a19e-3ea88f4ce09f" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="jsontaskFlow" doc:id="7e90118f-4540-4133-a6d6-a6b9e241e244" >
+		<http:listener doc:name="Listener" doc:id="0914be1a-eca4-4c44-96e4-1720a267ffd4" config-ref="HTTP_Listener_config" path="/json" allowedMethods="POST"/>
+		<set-variable value="#[message.payload.json]" doc:name="Set Variable" doc:id="9fc69bbe-c490-4135-8704-ca252ff9976a" variableName="json" />
+		<http:request method="GET" doc:name="Request" doc:id="c2098ba7-1eb9-45d5-9294-ab3a17d136d3" url="https://jsonplaceholder.typicode.com/posts"/>
+		<choice doc:name="Choice" doc:id="786a29bf-d3c7-48a7-a937-16d66fc50e9d" >
+			<when expression='#[vars.json=="userId"]'>
+				<ee:transform doc:name="Transform Message" doc:id="3356c83f-5b9b-40a9-929c-eb5af013156a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"User Id": message.payload[0].userId
+	}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+			<when expression='#[vars.json == "title"]'>
+				<ee:transform doc:name="Transform Message" doc:id="f5042bab-c1de-45a3-b303-e8ba9247da89" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	title: message.payload map(item)-> {
+		"Title": item.title
+	} 
+	}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[vars.json=="body"]'>
+				<ee:transform doc:name="Transform Message" doc:id="e06c5f92-8858-4a58-b7ea-b49417117403" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	body: message.payload map(item)-> {
+		"Body": item.body
+	}
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[vars.json=="id"]'>
+				<ee:transform doc:name="Transform Message" doc:id="8eaece66-7e84-496c-87a9-81f5e129ffdf" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Id":message.payload[0].id
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<set-payload value='#["fix your code"]' doc:name="Set Payload" doc:id="27ca2c17-523c-491a-bde4-0ed3777e4388" mimeType="text/html"/>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

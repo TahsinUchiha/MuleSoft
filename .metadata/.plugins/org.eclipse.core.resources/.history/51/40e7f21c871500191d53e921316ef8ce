@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c1c16854-8b18-4fd7-82a6-b86f36f2c5bd" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="93aba465-3ea8-4c7d-8ceb-6c49dcebe954" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" database="school" />
+	</db:config>
+	<flow name="SelectFlow" doc:id="dec6b95c-4d58-47ec-b169-d62e795cf339" >
+		<http:listener doc:name="Listener" doc:id="3c3974f3-9a16-48db-8163-7270b820c1c7" allowedMethods="POST" config-ref="HTTP_Listener_config" path="/schooldb/find"/>
+		<set-variable value="#[message.payload.operation]" doc:name="Set Variable" doc:id="3babb60a-b506-443b-9cde-f55d5fb00672" variableName="operation"/>
+		<db:select doc:name="Select" doc:id="f33edb5e-d86a-4237-bb67-fd2b9c9876f9" config-ref="Database_Config">
+			<db:sql >SELECT * FROM School WHERE NAME =:Name</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	"Name": vars.operation
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="7a4ee8b1-b56b-4afa-a7ea-508cc532ed96" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"data": message.payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="schooldatabaseFlow" doc:id="de73657c-82fb-4906-8296-86c691868fa6" >
+		<http:listener doc:name="Listener" doc:id="49e046bf-5cb9-4389-9099-76735e09d6b4" config-ref="HTTP_Listener_config" allowedMethods="POST" path="/schooldb/insert"/>
+		<db:bulk-insert doc:name="Bulk insert" doc:id="a608be9f-4e25-428d-9d6c-e68f2f5634cb" config-ref="Database_Config">
+			<db:bulk-input-parameters ><![CDATA[#[{
+	"RegNo":message.payload.reg,
+	"Name":message.payload.name,
+	"Marks":message.payload.marks
+}]]]></db:bulk-input-parameters>
+			<db:sql >INSERT INTO `school`(`REGNO`, `NAME`, `MARKS`) VALUES (:RegNo,:Name,:Marks)</db:sql>
+		</db:bulk-insert>
+		<ee:transform doc:name="Transform Message" doc:id="2432459c-3948-4721-93cf-a4d90689ca4e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Data": message.payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

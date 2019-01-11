@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="00cb61a5-4214-4f05-bbf2-78a559ae945a" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="GetAPI" doc:id="8a2e1d56-87ab-4003-ae4a-e75ef2da000e" >
+		<http:listener doc:name="Listener" doc:id="340f2c65-6d84-4bbe-8e40-058c7d3ee1c7" path="API" allowedMethods="GET" config-ref="HTTP_Listener_config"/>
+		<set-payload value='#[message.attributes.method ++ "                       Welcome my Friend!" ++ message.attributes.queryParams.name as String ++ " are you currently living in " ++ message.attributes.queryParams.city as String ++ " ? "]' doc:name="Set Payload" doc:id="e42755c8-741d-4d3e-a5ca-3107980cefb4" mimeType="text/html"/>
+	</flow>
+	<flow name="PostAPI" doc:id="ed246164-0c9f-40e0-95fb-8aef9fedac45" >
+		<http:listener doc:name="Listener" doc:id="f931f33e-8456-4d3e-8178-53f12fe1d234" config-ref="HTTP_Listener_config" path="API" allowedMethods="POST"/>
+		<set-payload value='#[message.attributes.method ++ message.payload.name ++ " I am from " ++ message.payload.city]' doc:name="Set Payload" doc:id="798145f1-b1e4-4f32-89b4-d2dadafacb10" mimeType="text/html"/>
+	</flow>
+	<flow name="GetMathAPI" doc:id="46aeac16-ed45-4013-870d-b3d971fd3412" >
+		<http:listener doc:name="Listener" doc:id="05ad6d56-a50b-432b-a944-933f494030be" config-ref="HTTP_Listener_config" path="/Maths" allowedMethods="GET"/>
+		<set-payload value="#[sum((message.attributes.queryParams.No1), (message.attributes.queryParams.No2)]" doc:name="Set Payload" doc:id="38f21851-fdf8-4fbf-a487-315aa0e2249d" mimeType="text/html"/>
+	</flow>
+	<flow name="PostMathAPI" doc:id="f91478c4-40d4-4a63-8b3e-7a1e1a5ef429" >
+		<http:listener doc:name="Listener" doc:id="561284c2-ec2c-4c83-b707-65091240ee5c" config-ref="HTTP_Listener_config" path="/Maths" allowedMethods="POST"/>
+		<set-payload value="#[(message.payload.No1 as Number + message.payload.No2 as Number)]" doc:name="Set Payload" doc:id="2213ef90-4b97-41be-bd60-1f329e7c7e87" mimeType="text/html"/>
+	</flow>
+</mule>

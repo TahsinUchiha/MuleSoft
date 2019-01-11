@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c9fe1b31-e5b9-4b13-9be1-a985101471ad" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="b4e9ff7b-05cb-4fa4-a665-8cc7366c1644" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" database="tesco" />
+	</db:config>
+	<flow name="dataflowFlow" doc:id="b64d6ee1-8dc7-4e71-857f-403d5e316cb4" >
+		<http:listener doc:name="Listener" doc:id="90fdac5b-5b47-4383-8c65-d46984a52e1f" path="/database" config-ref="HTTP_Listener_config"/>
+		<db:select doc:name="Select" doc:id="3b1ed1aa-671e-4ccc-8aa1-37e549c3515e" config-ref="Database_Config">
+			<db:sql >SELECT :Title FROM Category
+</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	"Title": vars.C
+	
+}]]]></db:input-parameters>
+		</db:select>
+		<set-variable value="#[message.attributes.queryParams.C]" doc:name="Choice" doc:id="7dad292f-4f76-4887-ba34-9b7fe3000386" variableName="C" />
+		<ee:transform doc:name="Transform Message" doc:id="27f81478-1d8a-427b-ad2a-ddbe7de157f4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"data": message.payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
