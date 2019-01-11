@@ -1,0 +1,47 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<h1>
+    Form Checker
+</h1>
+    <script>
+    function check() {
+        for (var i=0;i<window.document.forms[0].elements.length;i++){
+            if ( window.document.forms[0].elements[i].value=="")
+            {
+                window.document.forms[0].elements[i].focus();
+                break;
+            }
+        }
+   }
+    
+    </script>
+
+<form id="frm">
+<input id = "a">
+</br>
+</br>
+<input id = "b">
+</br>
+</br>
+<input id = "c">
+</br>
+</br>
+<input id = "d">
+</br>
+</br>
+<input id = "e">
+</br>
+<input type = "button" onClick = "check()" value = "Check">
+</form>
+
+
+</html>
+
+

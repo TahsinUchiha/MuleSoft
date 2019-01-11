@@ -1,0 +1,35 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<script>
+    function moveObject() {
+    
+        document.getElementById("mouse").style.left = event.clientX;
+        document.getElementById("mouse").style.top = event.clientY;
+    
+    }
+    
+    function changeText() {
+        var swap = document.getElementById("swap").value;
+        document.getElementById("mouse").innerHTML = swap;
+    }
+
+    function makeLarge() {
+        
+        document.getElementById("mouse").style.fontSize = "100px";
+    }
+</script>
+
+
+<body onmousemove="moveObject()", onkeydown="makeLarge()">
+<input  id ="swap" onmouseover = "changeText()" value = "TestValue">
+<span id = "mouse" style = "position:absolute" >
+TheShafeeQ
+</span>
+
+</body>
+</html>

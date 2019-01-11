@@ -1,0 +1,26 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function onGeneratedRow(columnsResult) {
+    var jsonData = {};
+    columnsResult.forEach(function(column) 
+    {
+        var columnName = column.metadata.colName;
+        jsonData[columnName] = column.value;
+    });
+    viewData.data.push(jsonData);
+ }
+    </script>
+
+    <form action="http://localhost:8081/tescodb" method="POST">
+        <!-- <input type = "radio" input name="C"> -->
+        <button type="button" onsubmit="onGeneratedRow()"> Categories </button>
+    </form>
+</body>
+</html>
